@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LanguageController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,11 +18,15 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// public routes Auth
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-Route::apiResource('/language', LanguageController::class);
-Route::apiResource('/category', CategoryController::class);
-Route::apiResource('/author', AuthorController::class);
-Route::apiResource('/book', BookController::class);
+//private  routes only authenticate can acces these routes
+Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::apiResource('/language', LanguageController::class);
+    Route::apiResource('/category', CategoryController::class);
+    Route::apiResource('/author', AuthorController::class);
+    Route::apiResource('/book', BookController::class);
+    Route::post('/logout', [AuthController::class, 'logOut']);
+});
