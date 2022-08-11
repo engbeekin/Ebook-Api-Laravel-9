@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBookRequest;
+use App\Http\Resources\BookResource;
 use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -16,7 +17,7 @@ class BookController extends Controller
      */
     public function index()
     {
-        $book = Book::latest()->paginate(10);
+        $book = BookResource::collection(Book::with('authors', 'categories')->latest()->paginate(10));
 
         return response()->json([
             'data' => $book,

@@ -15,7 +15,7 @@ class LanguageController extends Controller
      */
     public function index()
     {
-        $language = LanguageResource::collection(Language::latest()->get());
+        $language = LanguageResource::collection(Language::with(['books' => ['authors', 'categories']])->get());
 
         return response()->json([
             'data' => $language,

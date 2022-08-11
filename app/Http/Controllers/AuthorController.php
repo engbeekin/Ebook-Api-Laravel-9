@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAuthorRequest;
+use App\Http\Resources\AuthorResource;
 use App\Models\Author;
 
 class AuthorController extends Controller
@@ -14,7 +15,7 @@ class AuthorController extends Controller
      */
     public function index()
     {
-        $author = Author::latest()->get();
+        $author = AuthorResource::collection(Author::latest()->get());
 
         return response()->json([
             'data' => $author,

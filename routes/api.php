@@ -26,4 +26,3 @@ Route::apiResource('/language', LanguageController::class);
 Route::apiResource('/category', CategoryController::class);
 Route::apiResource('/author', AuthorController::class);
 Route::apiResource('/book', BookController::class);
-

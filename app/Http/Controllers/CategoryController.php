@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StorecategoryRequest;
+use App\Http\Resources\CategoryResource;
 use App\Models\category;
 
 class CategoryController extends Controller
@@ -14,7 +15,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $category = category::latest()->get();
+        $category = CategoryResource::collection(category::latest()->get());
 
         return response()->json([
             'data' => $category,
