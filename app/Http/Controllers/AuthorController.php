@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Author;
 use App\Http\Requests\StoreAuthorRequest;
-use App\Http\Requests\UpdateAuthorRequest;
+use App\Models\Author;
 
 class AuthorController extends Controller
 {
@@ -15,17 +14,11 @@ class AuthorController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $author = Author::latest()->get();
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return response()->json([
+            'data' => $author,
+        ], 200);
     }
 
     /**
@@ -36,7 +29,11 @@ class AuthorController extends Controller
      */
     public function store(StoreAuthorRequest $request)
     {
-        //
+        Author::create($request->validated());
+
+        return response()->json([
+            'message' => 'Author created Successfully',
+        ], 201);
     }
 
     /**
@@ -47,18 +44,9 @@ class AuthorController extends Controller
      */
     public function show(Author $author)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Author  $author
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Author $author)
-    {
-        //
+        return response()->json([
+            'data' => $author,
+        ], 200);
     }
 
     /**
@@ -68,9 +56,13 @@ class AuthorController extends Controller
      * @param  \App\Models\Author  $author
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateAuthorRequest $request, Author $author)
+    public function update(StoreAuthorRequest $request, Author $author)
     {
-        //
+        $author->update($request->validated());
+
+        return response()->json([
+            'message' => 'Author Updated Successfully',
+        ], 200);
     }
 
     /**
@@ -81,6 +73,10 @@ class AuthorController extends Controller
      */
     public function destroy(Author $author)
     {
-        //
+        $author->delete();
+
+        return response()->json([
+            'message' => 'Author deleted Successfully',
+        ], 200);
     }
 }

@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\category;
 use App\Http\Requests\StorecategoryRequest;
-use App\Http\Requests\UpdatecategoryRequest;
+use App\Models\category;
 
 class CategoryController extends Controller
 {
@@ -15,17 +14,11 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $category = category::latest()->get();
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return response()->json([
+            'data' => $category,
+        ], 200);
     }
 
     /**
@@ -36,7 +29,11 @@ class CategoryController extends Controller
      */
     public function store(StorecategoryRequest $request)
     {
-        //
+        category::create($request->validated());
+
+        return response()->json([
+            'message' => 'Category created Successfully',
+        ], 201);
     }
 
     /**
@@ -47,18 +44,9 @@ class CategoryController extends Controller
      */
     public function show(category $category)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(category $category)
-    {
-        //
+        return response()->json([
+            'data' => $category,
+        ], 200);
     }
 
     /**
@@ -68,9 +56,13 @@ class CategoryController extends Controller
      * @param  \App\Models\category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatecategoryRequest $request, category $category)
+    public function update(StorecategoryRequest $request, category $category)
     {
-        //
+        $category->update($request->validated());
+
+        return response()->json([
+            'message' => 'Category Updated Successfully',
+        ], 200);
     }
 
     /**
@@ -81,6 +73,10 @@ class CategoryController extends Controller
      */
     public function destroy(category $category)
     {
-        //
+        $category->delete();
+
+        return response()->json([
+            'message' => 'Category deleted Successfully',
+        ], 200);
     }
 }

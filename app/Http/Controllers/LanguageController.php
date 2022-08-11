@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Language;
 use App\Http\Requests\StoreLanguageRequest;
-use App\Http\Requests\UpdateLanguageRequest;
+use App\Http\Resources\LanguageResource;
+use App\Models\Language;
 
 class LanguageController extends Controller
 {
@@ -15,17 +15,11 @@ class LanguageController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $language = LanguageResource::collection(Language::latest()->get());
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return response()->json([
+            'data' => $language,
+        ], 200);
     }
 
     /**
@@ -36,7 +30,11 @@ class LanguageController extends Controller
      */
     public function store(StoreLanguageRequest $request)
     {
-        //
+        Language::create($request->validated());
+
+        return response()->json([
+            'message' => 'Language created Successfully',
+        ], 201);
     }
 
     /**
@@ -47,18 +45,9 @@ class LanguageController extends Controller
      */
     public function show(Language $language)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Language  $language
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Language $language)
-    {
-        //
+        return response()->json([
+            'data' => new LanguageResource($language),
+        ], 200);
     }
 
     /**
@@ -68,9 +57,13 @@ class LanguageController extends Controller
      * @param  \App\Models\Language  $language
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateLanguageRequest $request, Language $language)
+    public function update(StoreLanguageRequest $request, Language $language)
     {
-        //
+        $language->update($request->validated());
+
+        return response()->json([
+            'message' => 'Language Updated Successfully',
+        ], 200);
     }
 
     /**
@@ -81,6 +74,10 @@ class LanguageController extends Controller
      */
     public function destroy(Language $language)
     {
-        //
+        $language->delete();
+
+        return response()->json([
+            'message' => 'Language deleted Successfully',
+        ], 200);
     }
 }

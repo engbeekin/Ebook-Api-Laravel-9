@@ -2,14 +2,19 @@
 
 namespace App\Models;
 
-use App\Models\Author;
-use App\Models\category;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Book extends Model
 {
     use HasFactory;
+
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = ['id'];
 
     /**
      * every book has one language
@@ -23,21 +28,22 @@ class Book extends Model
     /**
      * every book has many categories
      * many to many relationship between books and  Categories
+     *
      * @return belongsToMany
      */
     public function categories()
     {
-        return $this->belongsToMany(category::class, 'book_id', 'id');
+        return $this->belongsToMany(category::class);
     }
 
     /**
      * every book has many Authors
      * many to many relationship between books and Authors
+     *
      * @return belongsToMany
      */
     public function authors()
     {
-        return $this->belongsToMany(Author::class, 'book_id', 'id');
+        return $this->belongsToMany(Author::class);
     }
-
 }
