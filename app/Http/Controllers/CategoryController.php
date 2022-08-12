@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorecategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\category;
+use Illuminate\Support\Facades\Cache;
 
 class CategoryController extends Controller
 {
@@ -15,7 +16,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $category = CategoryResource::collection(category::latest()->get());
+        $category = CategoryResource::collection(Cache::remember('categories', 60 * 60 * 24, function () {
+            return category::latest()->get();
+        }));
 
         return response()->json([
             'data' => $category,
