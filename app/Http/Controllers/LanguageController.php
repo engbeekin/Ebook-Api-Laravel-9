@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreLanguageRequest;
 use App\Http\Resources\LanguageResource;
 use App\Models\Language;
+use Illuminate\Support\Facades\Cache;
 
 class LanguageController extends Controller
 {
@@ -15,11 +16,11 @@ class LanguageController extends Controller
      */
     public function index()
     {
-        $language = LanguageResource::collection(Language::with(['books' => ['authors', 'categories']])->get());
+        $language = LanguageResource::collection(Cache::remember('laguages', 60 * 60 * 24, function () {
+            return Language::with(['books' => ['authors', 'categories']])->get();
+        }));
 
-        return response()->json([
-            'data' => $language,
-        ], 200);
+        return response()->json($language, 200);
     }
 
     /**

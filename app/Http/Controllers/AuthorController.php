@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreAuthorRequest;
 use App\Http\Resources\AuthorResource;
 use App\Models\Author;
+use Illuminate\Support\Facades\Cache;
 
 class AuthorController extends Controller
 {
@@ -15,11 +16,11 @@ class AuthorController extends Controller
      */
     public function index()
     {
-        $author = AuthorResource::collection(Author::latest()->get());
+        $author = AuthorResource::collection(Cache::remember('authors', 60 * 60 * 24, function () {
+            return Author::latest()->get();
+        }));
 
-        return response()->json([
-            'data' => $author,
-        ], 200);
+        return response()->json($author, 200);
     }
 
     /**

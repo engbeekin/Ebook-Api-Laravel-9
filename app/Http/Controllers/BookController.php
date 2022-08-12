@@ -6,6 +6,7 @@ use App\Http\Requests\StoreBookRequest;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
@@ -17,12 +18,12 @@ class BookController extends Controller
      */
     public function index()
     {
-        $book = BookResource::collection(Book::with('authors', 'categories')->latest()->paginate(10));
+        $book = BookResource::collection(Cache::remember('books', 60 * 60 * 24, function () {
+            return Book::with('authors', 'categories')->latest()->get();
+        }));
 
-        return response()->json([
-            'data' => $book,
-        ], 200);
-    }
+        return response()->json($book,200);
+     }
 
     /**
      * Store a newly created resource in storage.
@@ -35,12 +36,12 @@ class BookController extends Controller
 
         // booki image
         $image = $request->file('image');
-        $imageName = time().'.'.$image->getClientOriginalExtension();
+        $imageName = time() . '.' . $image->getClientOriginalExtension();
         $image->storeAs('/public/bookImages', $imageName);
 
         // book file upload as pdf
         $file = $request->file('file_upload');
-        $fileName = time().'.'.$file->getClientOriginalExtension();
+        $fileName = time() . '.' . $file->getClientOriginalExtension();
         $file->storeAs('/public/bookFileUpload', $fileName);
 
         // creating new  book
@@ -83,15 +84,15 @@ class BookController extends Controller
     {
         $image = $request->file('image');
         //deleting the old image to the storage
-        Storage::delete('/public/bookImages/'.$book->image);
-        $imageName = time().'.'.$image->getClientOriginalExtension();
+        Storage::delete('/public/bookImages/' . $book->image);
+        $imageName = time() . '.' . $image->getClientOriginalExtension();
         $image->storeAs('/public/bookImages', $imageName);
 
         // book file upload as pdf
         $file = $request->file('file_upload');
         //deleting the old image to the storage
-        Storage::delete('/public/bookFileUpload/'.$book->file_upload);
-        $fileName = time().'.'.$file->getClientOriginalExtension();
+        Storage::delete('/public/bookFileUpload/' . $book->file_upload);
+        $fileName = time() . '.' . $file->getClientOriginalExtension();
         $file->storeAs('/public/bookFileUpload', $fileName);
 
         // creating new  book
@@ -125,9 +126,9 @@ class BookController extends Controller
     {
         $book->delete();
         //  deleting the old file upload in storage folder
-        Storage::delete('/public/bookFileUpload/'.$book->file_upload);
+        Storage::delete('/public/bookFileUpload/' . $book->file_upload);
         //  deleting the old file upload in storage folder
-        Storage::delete('/public/bookImages/'.$book->image);
+        Storage::delete('/public/bookImages/' . $book->image);
 
         return response()->json([
             'message' => 'Book deleted Successfully',
